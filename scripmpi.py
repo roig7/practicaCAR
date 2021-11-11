@@ -1,10 +1,34 @@
 from mpi4py import MPI 
+# baseline cnn model for mnist
+import cv2 as cv
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt 
+import os
+from skimage.io import imread
+from matplotlib import cm
+from scipy.ndimage import gaussian_filter
+from skimage.color import rgb2gray
+import math
+
+imagen = plt.imread("m.png")
+gray = rgb2gray(imagen)
+filtro = gaussian_filter(gray,sigma=1)
+# Encuentra el gradiente en la dirección X
+grad_x = cv.Sobel(filtro, cv.CV_16SC1, 1, 0)
+# Encuentra el gradiente en la dirección y
+grad_y = cv.Sobel(filtro, cv.CV_16SC1, 0, 1)
+# Convertir el valor del gradiente a 8 bits
+x_grad = cv.convertScaleAbs(grad_x)
+y_grad = cv.convertScaleAbs(grad_y)
+# Combina dos gradientes
+combina_grad = cv.addWeighted(x_grad, 0.5, y_grad, 0.5, 0)
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank() # get your process ID
 # cogemos los datos que se van a utilizar
 if rank == 0: 
-    filas, columnas = combina_grad.shape
+	filas, columnas = combina_grad.shape
 	imagen_final = np.zeros([filas, columnas])               
 	# Definir umbral alto y bajo
 	bajo = 0.2 * np.max(combina_grad)
