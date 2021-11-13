@@ -11,7 +11,7 @@ from scipy.ndimage import gaussian_filter
 from skimage.color import rgb2gray
 import math
 
-imagen = plt.imread("m.png")
+imagen = plt.imread("s.png")
 gray = rgb2gray(imagen)
 filtro = gaussian_filter(gray,sigma=1)
 # Encuentra el gradiente en la dirección X
