@@ -9,6 +9,11 @@ from matplotlib import cm
 from scipy.ndimage import gaussian_filter
 from skimage.color import rgb2gray
 import math
+import time
+
+
+#Inicio del tiempo
+start = time.perf_counter()
 
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
@@ -18,7 +23,6 @@ if rank==0:
     img = plt.imread("s.png")
     gray = rgb2gray(img)
     filtro = gaussian_filter(gray,sigma=1)
-
     # Encuentra el gradiente en la dirección X
     grad_x = cv.Sobel(filtro, cv.CV_16SC1, 1, 0)
     # Encuentra el gradiente en la dirección y
@@ -32,7 +36,7 @@ if rank==0:
 else:#Metemos las variables que esten por encima que se usan en el bloque se vaya a paralelizar.
     combina_grad = None
 
-
+#Broadcast 
 combina_grad = comm.bcast(combina_grad, root=0)
 
 # Combina dos gradientes
@@ -78,5 +82,6 @@ comm.Gatherv(sendbuf=imagen_final_data,recvbuf=(imagen_final,arrayvacio), root=0
 
 #El proceso 0 es el unico proceso que imprime la imagen
 if (rank==0):
-    plt.imshow(imagen_final,cmap='gray',)
+    plt.imshow(imagen_final,cmap='gray')
     plt.show()
+    print(time.perf_counter()-start)
