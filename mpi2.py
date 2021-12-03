@@ -20,7 +20,7 @@ size = comm.Get_size()
 rank = comm.Get_rank()
 # Metemos todo lo que no se queire paralelizar dentro del rank =0 
 if rank==0:
-    img = plt.imread("s.png")
+    img = plt.imread("xl.jpg")
     gray = rgb2gray(img)
     filtro = gaussian_filter(gray,sigma=1)
     # Encuentra el gradiente en la dirección X
@@ -82,6 +82,5 @@ comm.Gatherv(sendbuf=imagen_final_data,recvbuf=(imagen_final,arrayvacio), root=0
 
 #El proceso 0 es el unico proceso que imprime la imagen
 if (rank==0):
-    plt.imshow(imagen_final,cmap='gray')
-    plt.show()
+
     print(time.perf_counter()-start)
